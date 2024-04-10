@@ -14,14 +14,14 @@ class network:
         self.func = func
         self.output = 0 
         self.last_layer_input = 0
-        self.gradient= np.zeros((1,last_layer_size))
+        
         self.layers = [layer(layer_sizes[i], layer_sizes[i+1], func[i]) for i in range(len(layer_sizes) - 1)]
         self.output_layer = layer(layer_sizes[-1], last_layer_size, "No")
         self.loss = 0
         self.learning_rate = learning_rate
         self.batch_size=0
             
-    def forward(self, inputs,target):
+    def forward(self, inputs):
         output = inputs
         for layer in self.layers:
             output = layer.forward(output)
@@ -30,27 +30,19 @@ class network:
        
         
         return self.output
-    
-    def cal_loss(self, target):
-        self.loss=0
-        self.loss+=np.mean(np.dot(target,-np.log(self.output).T))
         
         
-    def backward(self, target):
-        index_of_one = np.where(target == 1)[0]
-        gradient = - np.atleast_2d(self.output[0,index_of_one][0]) * target
-        self.gradient +=gradient
-        
-        
-        
-    def update(self):
-        gradient=self.gradient/self.batch_size
-        self.gradient = 0
-        gradient_reshaped = gradient.reshape(1, -1)
-        gradient = self.output_layer.backward(gradient_reshaped)
+    def backward(self,target):
+        index_of_one = np.where(target == 1)[1]
+        gradient =  target
+        gradient = self.output_layer.backward(gradient)
         for layer in reversed(self.layers):
             gradient = layer.backward(gradient)
+            
+    def cal_loss(self, targets):
+            self.loss=np.mean(np.dot(targets,-np.log(self.output).T))    
         
+    def update(self):
         for layer in self.layers:
             layer.update(self.learning_rate)
         self.output_layer.update(self.learning_rate)

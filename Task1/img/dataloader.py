@@ -23,7 +23,8 @@ class DataLoader:
         labels = [np.atleast_2d(label) for label in labels]
         
         # 堆叠二维数组以形成批数据
-        
+        datas = np.vstack(datas)
+        labels=np.vstack(labels)
         return datas,labels
 
 

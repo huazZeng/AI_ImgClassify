@@ -24,15 +24,15 @@ class train:
                     inputs,targets  =  self.dataloader.__next__()
                 except StopIteration:
                     break
-                for _input,target in zip(inputs,targets):
-                    self.neural_network.forward(_input,target)
-                    self.neural_network.backward(target)
-                    
+               
+                self.neural_network.forward(inputs)
+                self.neural_network.backward(targets)
+                self.neural_network.cal_loss(targets)
                 self.neural_network.update()
-            print(f"Epoch {epoch}, Loss: {self.neural_network.loss/int(self.data_model.__len__())}")
+            
             
             if epoch % 100 == 0:
-                print(f"Epoch {epoch}, Loss: {self.neural_network.loss/int(self.data_model.__len__())}")
+                print(f"Epoch {epoch}, Loss: {self.neural_network.loss}")
         
         
         
