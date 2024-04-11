@@ -29,7 +29,7 @@ class train:
                 self.neural_network.backward(targets)
                 self.neural_network.cal_loss(targets)
                 self.neural_network.update()
-            
+            print(f"Epoch {epoch}, Loss: {self.neural_network.loss}")
             
             if epoch % 100 == 0:
                 print(f"Epoch {epoch}, Loss: {self.neural_network.loss}")
@@ -58,7 +58,7 @@ class train:
             pickle.dump(data, f)
         
 if __name__ == '__main__':
-    train_model=train([784,128,128,64],12,['Relu','Relu','Relu'], 0.00001)
+    train_model=train([784,128,128,64],12,['Relu','Relu','Relu'], 0.001)
     train_model.train(30,1000)
     train_model.save_para()
     

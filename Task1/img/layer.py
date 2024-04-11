@@ -14,7 +14,7 @@ class layer:
         # 初始化权重和偏置
         
         mean = 0  # 均值
-        std = 0.1  # 标准差
+        std = 0.01  # 标准差
         self.weights = mean + std * np.random.randn(input_size, output_size)
         self.bias = -np.random.rand(output_size)
 
@@ -39,8 +39,9 @@ class layer:
         return np.maximum(0, x)
     
     def softmax(self, x):
+        
         exp_x = np.exp(x)
-        return exp_x / np.sum(exp_x)
+        return exp_x / np.sum(exp_x, axis=1, keepdims=True)
     
     def sigmoid(self, x):
         return 1 / (1 + np.exp(-x))

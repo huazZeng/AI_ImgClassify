@@ -16,7 +16,7 @@ class network:
         self.last_layer_input = 0
         
         self.layers = [layer(layer_sizes[i], layer_sizes[i+1], func[i]) for i in range(len(layer_sizes) - 1)]
-        self.output_layer = layer(layer_sizes[-1], last_layer_size, "No")
+        self.output_layer = layer(layer_sizes[-1], last_layer_size, "Softmax")
         self.loss = 0
         self.learning_rate = learning_rate
         self.batch_size=0
@@ -33,14 +33,20 @@ class network:
         
         
     def backward(self,target):
-        index_of_one = np.where(target == 1)[1]
-        gradient =  target
+        gradient =  (self.output-target)/len(target)
         gradient = self.output_layer.backward(gradient)
         for layer in reversed(self.layers):
             gradient = layer.backward(gradient)
             
     def cal_loss(self, targets):
-            self.loss=np.mean(np.dot(targets,-np.log(self.output).T))    
+        
+        self.loss = -np.sum(np.sum(targets * np.log(self.output), axis=1))/len(targets)
+
+        
+       
+        
+
+        
         
     def update(self):
         for layer in self.layers:
