@@ -36,7 +36,6 @@ class imageDataset:
                     self.labels.append(onehot)
                     
         self.train_images, self.test_images, self.train_labels, self.test_labels = self.train_test_split(self.images, self.labels, self.test_size, self.random_state)
-       
         
 
     def __len__(self):

@@ -14,7 +14,7 @@ class train:
     def train(self, batch_size, num_epochs):
         self.neural_network.batch_size=batch_size
         self.dataloader=DataLoader(self.data_model.train_images,self.data_model.train_labels,batch_size)
-        
+        self.testdataloader=DataLoader(self.data_model.test_images,self.data_model.test_labels,200)
         for epoch in range(num_epochs):
             
             self.dataloader.__iter__()
@@ -29,10 +29,18 @@ class train:
                 self.neural_network.backward(targets)
                 self.neural_network.cal_loss(targets)
                 self.neural_network.update()
-            print(f"Epoch {epoch}, Loss: {self.neural_network.loss}")
-            
+
+            self.testdataloader.__iter__()
+            testdata,testlabel=self.testdataloader.__next__()
+            self.neural_network.forward(testdata)
+            self.neural_network.cal_loss(testlabel)
+            print(self.acc(self.neural_network.output,testlabel))
+            print(f"Epoch {epoch}, test-Loss: {self.neural_network.loss}")
             if epoch % 100 == 0:
                 print(f"Epoch {epoch}, Loss: {self.neural_network.loss}")
+                
+                
+                
         
         
         
@@ -44,13 +52,19 @@ class train:
         
         
 
-    # def test(self):
-        # inputs = self.data_model.test_data[:, 0].reshape(-1, 1)
-        # targets =self.data_model.test_data[:, 1].reshape(-1, 1)
-        # self.neural_network.forward(inputs)
-        # self.neural_network.cal_loss(targets)
-        # print(f" Loss: {self.neural_network.loss_true}")
+    def test(self):
+        inputs = self.data_model.test_data[:, 0].reshape(-1, 1)
+        targets =self.data_model.test_data[:, 1].reshape(-1, 1)
+        self.neural_network.forward(inputs)
+        self.neural_network.cal_loss(targets)
+        print(f" Loss: {self.neural_network.loss_true}")
         
+    def acc(self,output,targets):
+        max_indices = np.argmax(output, axis=1)
+
+        accuracy = np.mean(np.equal(max_indices, np.argmax(targets, axis=1)))
+        return accuracy
+            
         
     def save_para(self):
         data=self.neural_network.para_save()
@@ -58,7 +72,7 @@ class train:
             pickle.dump(data, f)
         
 if __name__ == '__main__':
-    train_model=train([784,128,128,64],12,['Relu','Relu','Relu'], 0.001)
+    train_model=train([784,1024,256,128],12,['Relu','Relu','Relu'], 0.001)
     train_model.train(30,1000)
     train_model.save_para()
     

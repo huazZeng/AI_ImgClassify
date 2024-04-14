@@ -58,7 +58,7 @@ class network:
            'layer_size':self.layer_size,
            'last_layer_size' : self.last_layer_size,
            'func':self.func,
-           '_task_type' :self.task_type,
+
            'data' : []
         }
         for layer in self.layers:
