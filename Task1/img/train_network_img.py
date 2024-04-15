@@ -14,7 +14,7 @@ class train:
     def train(self, batch_size, num_epochs):
         self.neural_network.batch_size=batch_size
         self.dataloader=DataLoader(self.data_model.train_images,self.data_model.train_labels,batch_size)
-        self.testdataloader=DataLoader(self.data_model.test_images,self.data_model.test_labels,200)
+        self.testdataloader=DataLoader(self.data_model.test_images,self.data_model.test_labels,1000)
         for epoch in range(num_epochs):
             
             self.dataloader.__iter__()
