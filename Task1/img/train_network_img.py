@@ -68,11 +68,11 @@ class train:
         
     def save_para(self):
         data=self.neural_network.para_save()
-        with open('Task1\img_model_data.pkl', 'wb') as f:
+        with open('Task1\img\img_model_data.pkl', 'wb') as f:
             pickle.dump(data, f)
         
 if __name__ == '__main__':
     train_model=train([784,1024,256,128],12,['Relu','Relu','Relu'], 0.001)
-    train_model.train(30,1000)
+    train_model.train(30,500)
     train_model.save_para()
     

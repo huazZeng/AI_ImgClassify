@@ -9,17 +9,17 @@ class LeNet(nn.Module):
         super(LeNet, self).__init__()
         self.conv = nn.Sequential(
             nn.Conv2d(1, 6, 5), # in_channels, out_channels, kernel_size
-            nn.Sigmoid(),
+            nn.ReLU(),
             nn.MaxPool2d(2, 2), # kernel_size, stride
             nn.Conv2d(6, 16, 5),
-            nn.Sigmoid(),
+            nn.ReLU(),
             nn.MaxPool2d(2, 2)
         )
         self.fc = nn.Sequential(
             nn.Linear(16*4*4, 120),
-            nn.Sigmoid(),
+            nn.ReLU(),
             nn.Linear(120, 84),
-            nn.Sigmoid(),
+            nn.ReLU(),
             nn.Linear(84, 12)
         )
 

@@ -25,41 +25,32 @@ class imageDataset:
             class_dir = os.path.join(self.data_dir, class_name)
             if os.path.isdir(class_dir):
                 for file_name in os.listdir(class_dir):
-                    image_path = os.path.join(class_dir, file_name)
-                    image = Image.open(image_path).convert('L')
-                    image = np.array(image)
-                    # Flatten to 1D vector
-                    image_vector = image.flatten()
+                    if  int(file_name.split('.')[0]) < 550:
+                        image_path = os.path.join(class_dir, file_name)
+                        image_path = os.path.join(class_dir, file_name)
+                        image = Image.open(image_path).convert('L')
+                        image = np.array(image)
+                        # Flatten to 1D vector
+                        image_vector = image.flatten()
+                        self.train_images.append(image_vector)
+                        self.train_labels.append(i)
+                    elif int(file_name.split('.')[0]) >= 550:
+                        image_path = os.path.join(class_dir, file_name)
+                        image_path = os.path.join(class_dir, file_name)
+                        image = Image.open(image_path).convert('L')
+                        image = np.array(image)
+                        # Flatten to 1D vector
+                        image_vector = image.flatten()
+                        self.test_images.append(image_vector)
+                        self.test_labels.append(i)
+
+
                     
-                    self.images.append(image_vector)
-                    onehot=np.eye(12)[i]
-                    self.labels.append(onehot)
-                    
-        self.train_images, self.test_images, self.train_labels, self.test_labels = self.train_test_split(self.images, self.labels, self.test_size, self.random_state)
-        
+      
 
     def __len__(self):
         return len(self.train_images)
 
     
 
-    def train_test_split(self,data, labels, test_size, random_state=None):
-        if random_state:
-            random.seed(random_state)
-        
-        # 将索引随机打乱
-        indices = list(range(len(data)))
-        random.shuffle(indices)
-        
-        # 计算测试集的大小
-        num_test = int(test_size * len(data))
-        
-        # 分割数据和标签
-        test_indices = indices[:num_test]
-        train_indices = indices[num_test:]
-        train_data = [data[i] for i in train_indices]
-        test_data = [data[i] for i in test_indices]
-        train_labels = [labels[i] for i in train_indices]
-        test_labels = [labels[i] for i in test_indices]
-        
-        return train_data, test_data, train_labels, test_labels
+    
