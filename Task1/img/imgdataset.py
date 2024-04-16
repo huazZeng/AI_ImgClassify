@@ -33,7 +33,8 @@ class imageDataset:
                         # Flatten to 1D vector
                         image_vector = image.flatten()
                         self.train_images.append(image_vector)
-                        self.train_labels.append(i)
+                        onehot=np.eye(12)[i]
+                        self.train_labels.append(onehot)
                     elif int(file_name.split('.')[0]) >= 550:
                         image_path = os.path.join(class_dir, file_name)
                         image_path = os.path.join(class_dir, file_name)
@@ -42,7 +43,8 @@ class imageDataset:
                         # Flatten to 1D vector
                         image_vector = image.flatten()
                         self.test_images.append(image_vector)
-                        self.test_labels.append(i)
+                        onehot=np.eye(12)[i]
+                        self.test_labels.append(onehot)
 
 
                     

@@ -37,6 +37,6 @@ class trained_model:
         return accuracy
     
 if __name__ == '__main__':
-    model=trained_model('Task1\img\img_model_data.pkl')
+    model=trained_model('Task1\img\data\img_model_data.pkl')
     model.load_para()
     model.test()
