@@ -20,6 +20,7 @@ class LeNet(nn.Module):
             nn.ReLU(),
             nn.Linear(120, 84),
             nn.ReLU(),
+            nn.Dropout(0.5),
             nn.Linear(84, 12)
         )
 
@@ -28,12 +29,15 @@ class LeNet(nn.Module):
         output = self.fc(feature.view(img.shape[0], -1))
         return output
 
-
+    def load_parameters(self, file_path):
+        self.load_state_dict(torch.load(file_path))
+        self.eval()  # 将模型设置为评估模式，因为在推理时不需要梯度
 
 
 if __name__ == '__main__':
     net=LeNet()
-    lr, num_epochs = 0.001, 100
+    lr, num_epochs = 0.001, 50
     optimizer = torch.optim.Adam(net.parameters(), lr=lr)
-    train_iter,test_iter=train_CNN.loaddata('Task2\\train','Task2\\train',64)
+    train_iter,test_iter=train_CNN.loaddata('Task2\\train','Task2\\train',30)
     train_CNN.train(net, train_iter, test_iter,optimizer, device, num_epochs)
+    torch.save(net.state_dict(), 'Task2\\model.pth')

@@ -12,6 +12,7 @@ class LocalDataset(Dataset):
         self.labels = []
         self.transform2tensor= transforms.Compose([
             transforms.Resize((28, 28)),
+            transforms.RandomHorizontalFlip(),
             transforms.ToTensor()
             ])
         self._load_data()
