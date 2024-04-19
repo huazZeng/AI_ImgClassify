@@ -14,7 +14,7 @@ class layer:
         # 初始化权重和偏置
         
         mean = 0  # 均值
-        std = 0.01 # 标准差
+        std = 0.001 # 标准差
         self.weights = mean + std * np.random.randn(input_size, output_size)
         self.bias = -np.random.rand(output_size)
 

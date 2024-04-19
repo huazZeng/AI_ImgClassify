@@ -96,7 +96,7 @@ class train:
             pickle.dump(experience_data, f)
         
 if __name__ == '__main__':
-    train_model=train([784,1024,256,128],12,['Relu','Relu','Relu'], 0.001)
+    train_model=train([784,1176],12,['Relu'], 0.0001)
     train_model.train(30,100)
     train_model.save_para()
     
