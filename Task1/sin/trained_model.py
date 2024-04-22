@@ -47,6 +47,6 @@ class trained_model:
         
         
 if __name__ == '__main__':
-    model=trained_model('Task1\sin\data\data_009_64sig.pkl')
+    model=trained_model('Task1\sin\data\data.pkl')
     model.load_para()
     model.test_sin()

@@ -51,10 +51,10 @@ class network:
         for layer in reversed(self.layers):
             gradient = layer.backward(gradient)
     
-    def update(self):
+    def update(self,learning_rate):
         for layer in self.layers:
-            layer.update(self.learning_rate)
-        self.output_layer.update(self.learning_rate)
+            layer.update(learning_rate)
+        self.output_layer.update(learning_rate)
 
     def para_save(self):
         data={
