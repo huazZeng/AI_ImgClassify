@@ -21,6 +21,7 @@ class train:
         self.best_loss=1000000000
         self.wait=0
         self.patience=5
+        
     def train(self, batch_size, num_epochs):
         self.loss_train=[]
         self.loss_test=[]
@@ -83,7 +84,19 @@ class train:
         plt.savefig(path)
         plt.close()
         
-
+    def load_para(self,path):
+        with open(path, 'rb') as f:
+            loaded_data = pickle.load(f)
+        self.network=network(loaded_data['layer_size'],loaded_data['last_layer_size'],
+                           loaded_data['func'],loaded_data['_task_type'],0)
+        i=0
+        for layer in self.network.layers:
+            layer.weights=loaded_data['data'][i]
+            layer.bias=loaded_data['data'][i+1]
+            i+=2
+        self.network.output_layer.weights=loaded_data['data'][i]
+        self.network.output_layer.bias=loaded_data['data'][i+1]
+        
     def test(self):
         inputs = self.data_model.test_data[:, 0].reshape(-1, 1)
         targets =self.data_model.test_data[:, 1].reshape(-1, 1)
@@ -91,11 +104,37 @@ class train:
         self.neural_network.cal_loss(targets)
         return self.neural_network.loss_true
         
-    def save_para(self):
+    def save_para(self,path):
         data=self.neural_network.para_save()
-        with open('Task1\data.pkl', 'wb') as f:
+        with open(path, 'wb') as f:
             pickle.dump(data, f)
+            
+            
+            
+    def test_sin(self):
+        # self.data_model=data_model()
+        # self.data_model.get_sin_Data()
+        # self.data_model.divider(0.99)
         
+        # x_values = np.random.uniform(-np.pi, np.pi, 100)
+        x_values = np.linspace(-np.pi, np.pi, 100000)
+        # 生成对应的 sin(x) 值
+        y_values = np.sin(x_values)
+        
+        inputs = x_values.reshape(-1, 1)
+        targets =y_values.reshape(-1, 1)
+        self.network.forward(inputs)
+        self.network.cal_loss(targets)
+        print(f" Loss: {self.network.loss_true}")
+        plt.figure(figsize=(8, 6))
+        plt.plot(inputs,targets, label='Actual', color='blue', linestyle='--')
+        plt.plot(inputs,self.network.output , label='Predicted', color='red')
+        plt.title('Comparison of Actual and Predicted Values')
+        plt.xlabel('Input')
+        plt.ylabel('Output')
+        plt.legend()
+        plt.grid(True)
+        plt.show()    
 # if __name__ == '__main__':
 #     # trained_model=trained_model('.\Task1\data.pkl')
 #     # trained_model.load_para()

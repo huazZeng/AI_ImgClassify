@@ -20,15 +20,23 @@
 ### 实验
 #### 拟合 Sin
 ##### 学习率对网络的影响
-**基于 单层 32unit sigmoid激活函数 实验**
-**上图为lr为0.001 下图为 0.01 的情况**
+* **基于 单层 32unit sigmoid激活函数 实验**
+* **上图为lr为0.001 下图为 0.01 的情况**
 可见 对于sigmoid函数而言
-* lr太小的话，在部分epoch之后，loss会开始慢速下降，导致训练缓慢，所以需要较大的lr
-![data1](sin/experiencedata/sigmoid1_32sigmoid_lr1.png)
-![data2](sin/experiencedata/sigmoid1_32sigmoid_lr2.png)
+lr太小的话，在部分epoch之后，loss会开始慢速下降，导致训练缓慢，所以需要较大的lr
+
+| 图像 |
+| ---- | 
+|![data1](sin/experiencedata/sigmoid1_32sigmoid_lr1.png)|
+|![data2](sin/experiencedata/sigmoid1_32sigmoid_lr2.png)|
 ##### 正则项对网络的影响
+* 下面的两个网络在相同初始化情况下进行迭代
+* 可见 正则项会惩罚过大的梯度，导致下降较慢，同时会防止过拟合
 
-
+| 网络             | L1误差  |图像
+| ---------------- | -------------------- |---|
+| 正则项系数为0 |  Epoch 2900, Loss: 0.0208701047369986|![alt text](sin/experiencedata/sigmoid1_32sigmoid_l1false.png)|
+| 正则项系数为0.01  | Epoch 2900, Loss: 0.022429724348479462 |![alt text](sin/experiencedata/sigmoid1_32sigmoid_l1ttrue.png)|
 
 
 

@@ -20,18 +20,32 @@ data2=[]
 
 
 #测试网络层数对网络的影响
-for i in range(0,10):
-    train_model=train(layer_sizes[4],1,sigmoid_layer_fucs[4], Task_type.Fitting,0.01,False,0.0001)
-    train_model.train(25,3000)
-    data1.append(train_model.test())
-    
-for i in range(0,10):
-    train_model=train(layer_sizes[3],1,sigmoid_layer_fucs[3], Task_type.Fitting,0.01,False,0.0001)
-    train_model.train(25,3000)
-    data2.append(train_model.test())
 
-print(np.mean(data1))
-print(np.mean(data2))
+
+    
+
+train_model=train(layer_sizes[3],1,sigmoid_layer_fucs[3], Task_type.Fitting,0.01,False,0.0001)
+train_model.save_para('Task1\sin\data\ini_para.pkl')
+train_model.train(25,3000)
+result_layersize = '_'.join(str(size) for size in layer_sizes[3])
+result_fuc='_'.join(sigmoid_layer_fucs[3])
+result_lrup='_'+str(False)
+path='Task1\sin\experiencedata\\'+result_fuc+result_layersize+result_fuc+'_l1ttrue'+'.png'
+train_model.epo_plot(path)
+
+model=train(layer_sizes[3],1,sigmoid_layer_fucs[3], Task_type.Fitting,0.01,False,0.0001)
+model.load_para('Task1\sin\data\ini_para.pkl')
+model.l1_lambda=0
+model.train(25,3000)
+
+result_layersize = '_'.join(str(size) for size in layer_sizes[3])
+result_fuc='_'.join(sigmoid_layer_fucs[3])
+result_lrup='_'+str(False)
+path='Task1\sin\experiencedata\\'+result_fuc+result_layersize+result_fuc+'_l1false'+'.png'
+model.epo_plot(path)
+
+# print(np.mean(data1))
+# print(np.mean(data2))
 # train_model=train(layer_sizes[3],1,sigmoid_layer_fucs[3], Task_type.Fitting,0.01,False)
 # train_model.train(25,3000)
 # result_layersize = '_'.join(str(size) for size in layer_sizes[3])

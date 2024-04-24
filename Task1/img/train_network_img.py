@@ -22,6 +22,11 @@ class train:
         self.epoch_testacc=[]
         self.epoch_testloss=[]
         self.epoch_trainacc=[]
+        
+        
+        
+        
+        
     def train(self, batch_size, num_epochs):
         self.neural_network.batch_size=batch_size
         self.dataloader=DataLoader(self.data_model.train_images,self.data_model.train_labels,batch_size)
@@ -109,7 +114,7 @@ class train:
         with open('Task1\img\data\experience.pkl', 'wb') as f:
             pickle.dump(experience_data, f)
     
-    def epo_plot(self,count):
+    def epo_plot(self,path):
         # 绘制训练和测试损失曲线
         x = range(0, len(self.epoch_trainacc), 1)
         plt.plot(x, self.epoch_trainacc, label='Training acc', color='blue')
@@ -118,16 +123,27 @@ class train:
         plt.ylabel('Loss')
         plt.title('Training and Test Loss')
         plt.legend()
-        result_layersize = '_'.join(str(size) for size in self.layer_size)
-        result_fuc='_'.join(self.func)
-        result_lrup='_'+str(self.lr_update)
-        plt.savefig('Task1\img\experiencedata\\'+result_fuc+result_layersize+result_fuc+'_'+str(count)+'.png')
+        plt.savefig(path)
         plt.close()
+        
+    def load_para(self):
+        with open(self.path, 'rb') as f:
+            loaded_data = pickle.load(f)
+        self.network=network(loaded_data['layer_size'],loaded_data['last_layer_size'],
+                           loaded_data['func'],0)
+        i=0
+        for layer in self.network.layers:
+            layer.weights=loaded_data['data'][i]
+            layer.bias=loaded_data['data'][i+1]
+            i+=2
+        self.network.output_layer.weights=loaded_data['data'][i]
+        self.network.output_layer.bias=loaded_data['data'][i+1]
+        
     
         
 if __name__ == '__main__':
     train_model=train([784,1176],12,['Relu'], 0.0001,True,0)
-    train_model.train(30,10)
-    train_model.epo_plot(1)
+    train_model.train(30,1)
+    train_model.epo_plot("Task1\img\experiencedata\\new.png")
     
     
