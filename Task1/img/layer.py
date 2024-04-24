@@ -46,15 +46,16 @@ class layer:
     def sigmoid(self, x):
         return 1 / (1 + np.exp(-x))
     
-    def backward(self, gradient):
+    def backward(self, gradient,l1_lambda):
         if (self.func =="Relu"):
             relu_derivative =  np.where(self.activations>0, 1, 0)
             gradient *=relu_derivative
         elif(self.func =="sigmoid"):
             sigmoid_derivative = self.activations * (1 - self.activations) # sigmoid 函数的导数
             gradient *= sigmoid_derivative
-            
+
         self.gradient_weights = np.dot(self.inputs.T, gradient)
+        self.gradient_weights += l1_lambda * np.sign(self.weights)
         self.gradient_bias = np.sum(gradient, axis=0, keepdims=True)
         self.gradient_inputs = np.dot(gradient, self.weights.T)
         return self.gradient_inputs

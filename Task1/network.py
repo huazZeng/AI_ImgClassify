@@ -7,7 +7,8 @@ class Task_type(Enum):
     Classification = 2
 
 class network:
-    def __init__(self, layer_sizes, last_layer_size,func,learning_rate):
+    def __init__(self, layer_sizes, last_layer_size,func, _task_type,learning_rate):
+        self.task_type = _task_type
         self.layer_size=layer_sizes
         self.last_layer_size=last_layer_size
         self.func = func
@@ -27,10 +28,13 @@ class network:
             
     def forward(self, inputs):
         output = inputs
+    
         for layer in self.layers:
+           
             output = layer.forward(output)
         self.last_layer_input =output
         self.output=self.output_layer.forward(output)
+        
         return self.output
     
     def cal_loss(self, targets):
@@ -40,17 +44,17 @@ class network:
         else:
             self.loss=np.mean(np.dot(targets,-np.log(self.output).T))
             
-    def backward(self, targets):
-        gradient = self.output - targets / len(targets)
-        gradient = self.output_layer.backward(gradient)
+    def backward(self, targets,l1_lambda):
+        gradient = (self.output - targets) / targets.shape[0]
+        gradient = self.output_layer.backward(gradient,l1_lambda)
         
         for layer in reversed(self.layers):
             gradient = layer.backward(gradient)
     
-    def update(self):
+    def update(self,learning_rate):
         for layer in self.layers:
-            layer.update(self.learning_rate)
-        self.output_layer.update(self.learning_rate)
+            layer.update(learning_rate)
+        self.output_layer.update(learning_rate)
 
     def para_save(self):
         data={

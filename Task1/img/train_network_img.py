@@ -8,9 +8,16 @@ import matplotlib.pyplot as plt
 
 
 class train:
-    def __init__(self,layer_size,last_layer_size,func,learning_rate):
+    def __init__(self,layer_size,last_layer_size,func,learning_rate,lr_update,l1_lambda):
         self.data_model = imageDataset('Task1\\img\\train')
-        self.neural_network = network(layer_size,last_layer_size,func,learning_rate)
+        self.neural_network = network(layer_size,last_layer_size,func,learning_rate,lr_update,l1_lambda)
+        self.learning_rate=learning_rate
+        self.lr_update=lr_update
+        self.layer_size=layer_size
+        self.func=func
+        self.patience=5
+        self.wait=0
+        self.best_loss=1000000
         self.epoch_trainloss=[]
         self.epoch_testacc=[]
         self.epoch_testloss=[]
@@ -55,9 +62,16 @@ class train:
             
             print(f"Epoch {epoch}, Test acc: {epochtestacc}")
             print(f"Epoch {epoch}, Trainacc: {epochacc/epochcount}")
-            if epoch % 100 == 0:
-                print(f"Epoch {epoch}, Loss: {self.neural_network.loss}")
-                
+            print(f"Epoch {epoch}, Loss: {self.neural_network.loss}")
+            
+            if self.neural_network.loss < self.best_loss:
+                self.best_loss = self.neural_network.loss
+                self.wait = 0
+            else:
+                self.wait += 1
+                if self.wait >= self.patience:
+                    print("Early stopping...")
+                    return
         
     def save_trainlog(self):
         with open('log.txt', 'a') as f:
@@ -94,9 +108,26 @@ class train:
         }
         with open('Task1\img\data\experience.pkl', 'wb') as f:
             pickle.dump(experience_data, f)
+    
+    def epo_plot(self,count):
+        # 绘制训练和测试损失曲线
+        x = range(0, len(self.epoch_trainacc), 1)
+        plt.plot(x, self.epoch_trainacc, label='Training acc', color='blue')
+        plt.plot(x, self.epoch_testacc, label='Test acc', color='red')
+        plt.xlabel('Epochs')
+        plt.ylabel('Loss')
+        plt.title('Training and Test Loss')
+        plt.legend()
+        result_layersize = '_'.join(str(size) for size in self.layer_size)
+        result_fuc='_'.join(self.func)
+        result_lrup='_'+str(self.lr_update)
+        plt.savefig('Task1\img\experiencedata\\'+result_fuc+result_layersize+result_fuc+'_'+str(count)+'.png')
+        plt.close()
+    
         
 if __name__ == '__main__':
-    train_model=train([784,1176],12,['Relu'], 0.0001)
-    train_model.train(30,100)
-    train_model.save_para()
+    train_model=train([784,1176],12,['Relu'], 0.0001,True,0)
+    train_model.train(30,10)
+    train_model.epo_plot(1)
+    
     

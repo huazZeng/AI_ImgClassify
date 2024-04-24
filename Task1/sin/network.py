@@ -44,12 +44,12 @@ class network:
         else:
             self.loss=np.mean(np.dot(targets,-np.log(self.output).T))
             
-    def backward(self, targets):
+    def backward(self, targets,l1_lambda):
         gradient = (self.output - targets) / targets.shape[0]
-        gradient = self.output_layer.backward(gradient)
+        gradient = self.output_layer.backward(gradient,l1_lambda)
         
         for layer in reversed(self.layers):
-            gradient = layer.backward(gradient)
+            gradient = layer.backward(gradient,l1_lambda)
     
     def update(self,learning_rate):
         for layer in self.layers:
