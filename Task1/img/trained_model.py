@@ -12,7 +12,7 @@ class trained_model:
         with open(self.path, 'rb') as f:
             loaded_data = pickle.load(f)
         self.network=network(loaded_data['layer_size'],loaded_data['last_layer_size'],
-                           loaded_data['func'],0)
+                           loaded_data['func'],0,0,0)
         i=0
         for layer in self.network.layers:
             layer.weights=loaded_data['data'][i]

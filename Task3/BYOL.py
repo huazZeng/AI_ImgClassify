@@ -103,4 +103,4 @@ for epoch in range(num_epochs):
         img1, img2 = imgs[0].to(device), imgs[1].to(device)
         loss = model(img1, img2)
         optimizer.zero_grad()
-        loss.backwar
+        loss.backward()

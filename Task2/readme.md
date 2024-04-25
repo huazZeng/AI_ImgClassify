@@ -5,10 +5,12 @@
 - trainfunc.py ：训练函数
 
 ### 对网络的改进
-
+- transform
+- dropout
+- batchnor
 
 ### 对网络设计的理解
-
+- 
 
 
 ### 对CNN的理解

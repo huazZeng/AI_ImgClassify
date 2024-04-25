@@ -12,12 +12,15 @@ class train:
         self.data_model = imageDataset('Task1\\img\\train')
         self.neural_network = network(layer_size,last_layer_size,func,learning_rate,lr_update,l1_lambda)
         self.learning_rate=learning_rate
+        
+        self.l1_lambda=l1_lambda
         self.lr_update=lr_update
         self.layer_size=layer_size
         self.func=func
         self.patience=5
         self.wait=0
         self.best_loss=1000000
+        self.best_acc=0
         self.epoch_trainloss=[]
         self.epoch_testacc=[]
         self.epoch_testloss=[]
@@ -69,7 +72,12 @@ class train:
             print(f"Epoch {epoch}, Trainacc: {epochacc/epochcount}")
             print(f"Epoch {epoch}, Loss: {self.neural_network.loss}")
             
-            if self.neural_network.loss < self.best_loss:
+            if(epoch%10==9&self.lr_update):
+                self.learning_rate/=2
+            
+            
+            if self.neural_network.loss < self.best_loss or self.epoch_testacc[-1] > self.best_acc:
+                self.best_acc= self.epoch_testacc[-1]
                 self.best_loss = self.neural_network.loss
                 self.wait = 0
             else:
@@ -100,10 +108,13 @@ class train:
         return accuracy
             
         
-    def save_para(self):
+    def save_para(self,path):
         data=self.neural_network.para_save()
-        with open('Task1\img\img_model_data.pkl', 'wb') as f:
+        with open(path, 'wb') as f:
             pickle.dump(data, f)
+        
+        
+    def save_data(self):
         experience_data={
             'testacc':self.epoch_testacc,
             'testloss':self.epoch_testloss,
@@ -113,7 +124,6 @@ class train:
         }
         with open('Task1\img\data\experience.pkl', 'wb') as f:
             pickle.dump(experience_data, f)
-    
     def epo_plot(self,path):
         # 绘制训练和测试损失曲线
         x = range(0, len(self.epoch_trainacc), 1)
@@ -126,11 +136,11 @@ class train:
         plt.savefig(path)
         plt.close()
         
-    def load_para(self):
-        with open(self.path, 'rb') as f:
+    def load_para(self,path):
+        with open(path, 'rb') as f:
             loaded_data = pickle.load(f)
         self.network=network(loaded_data['layer_size'],loaded_data['last_layer_size'],
-                           loaded_data['func'],0)
+                           loaded_data['func'],self.learning_rate,self.lr_update,self.l1_lambda)
         i=0
         for layer in self.network.layers:
             layer.weights=loaded_data['data'][i]
@@ -143,7 +153,8 @@ class train:
         
 if __name__ == '__main__':
     train_model=train([784,1176],12,['Relu'], 0.0001,True,0)
-    train_model.train(30,1)
+    train_model.train(30,200)
+    train_model.save_para()
     train_model.epo_plot("Task1\img\experiencedata\\new.png")
     
     
