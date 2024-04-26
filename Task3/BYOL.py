@@ -21,6 +21,7 @@ class BYOL(nn.Module):
     def __init__(self, dim=256, hidden_dim=4096, output_dim=256, beta=0.99, tau_base=0.996):
         super(BYOL, self).__init__()
         self.encoder = resnet50(pretrained=False)
+        #在线网络
         self.online_network = nn.Sequential(
             self.encoder.conv1,
             self.encoder.bn1,
@@ -34,6 +35,7 @@ class BYOL(nn.Module):
             nn.Flatten(),
             MLP(2048, hidden_dim, dim)
         )
+        #目标网络
         self.target_network = nn.Sequential(
             self.encoder.conv1,
             self.encoder.bn1,
@@ -49,6 +51,7 @@ class BYOL(nn.Module):
         )
         for param in self.target_network.parameters():
             param.requires_grad = False
+        #预测器
         self.predictor = MLP(dim, hidden_dim, output_dim)
         self.beta = beta
         self.tau_base = tau_base
@@ -65,11 +68,14 @@ class BYOL(nn.Module):
         return loss
 
     def update_target_network(self, current_step, max_steps):
+        #动量
         tau = 1 - (1 - self.tau_base) * (torch.cos(torch.tensor([current_step / max_steps * 3.1416])) + 1) / 2
+        #动量更新 target网络
         for online_params, target_params in zip(self.online_network.parameters(), self.target_network.parameters()):
             target_params.data = tau * target_params.data + (1 - tau) * online_params.data
 
     def loss_func(self, p, z):
+        #计算预测结果特征与实际特征的差别 作为loss
         p = F.normalize(p, dim=1)
         z = F.normalize(z, dim=1)
         return 2 - 2 * (p * z).sum(dim=1)
@@ -89,7 +95,7 @@ transform = transforms.Compose([
     transforms.Resize((224, 224)),
     transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
 ])
-
+#CIFAR10数据集
 train_dataset = datasets.CIFAR10(root='./data', train=True, transform=transform, download=True)
 train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=num_cores)
 

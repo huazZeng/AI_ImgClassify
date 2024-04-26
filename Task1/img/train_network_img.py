@@ -12,12 +12,12 @@ class train:
         self.data_model = imageDataset('Task1\\img\\train')
         self.neural_network = network(layer_size,last_layer_size,func,learning_rate,lr_update,l1_lambda)
         self.learning_rate=learning_rate
-        
+        self.data=self.neural_network.para_save()
         self.l1_lambda=l1_lambda
         self.lr_update=lr_update
         self.layer_size=layer_size
         self.func=func
-        self.patience=5
+        self.patience=10
         self.wait=0
         self.best_loss=1000000
         self.best_acc=0
@@ -32,6 +32,7 @@ class train:
         
     def train(self, batch_size, num_epochs):
         self.neural_network.batch_size=batch_size
+       
         self.dataloader=DataLoader(self.data_model.train_images,self.data_model.train_labels,batch_size)
         self.testdataloader=DataLoader(self.data_model.test_images,self.data_model.test_labels,1000)
         for epoch in range(num_epochs):
@@ -41,10 +42,9 @@ class train:
             self.dataloader.__iter__()
             for i in range(0,int(self.data_model.__len__()/batch_size)):
                 self.neural_network.loss=0
-                try:
-                    inputs,targets  =  self.dataloader.__next__()
-                except StopIteration:
-                    break
+                
+                inputs,targets  =  self.dataloader.__next__()
+                
                 epochcount+=1
                 
                 self.neural_network.forward(inputs)
@@ -52,7 +52,9 @@ class train:
                 self.neural_network.cal_loss(targets)
                 self.neural_network.update()
                 epochacc+=self.acc(self.neural_network.output,targets)
+
                 epochloss+=self.neural_network.loss
+            
             self.epoch_trainloss.append(epochloss/epochcount)
             self.epoch_trainacc.append(epochacc/epochcount)
             
@@ -72,11 +74,13 @@ class train:
             print(f"Epoch {epoch}, Trainacc: {epochacc/epochcount}")
             print(f"Epoch {epoch}, Loss: {self.neural_network.loss}")
             
-            if(epoch%10==9&self.lr_update):
-                self.learning_rate/=2
+            if(epoch==30&self.lr_update):
+                self.learning_rate/=10
             
             
             if self.neural_network.loss < self.best_loss or self.epoch_testacc[-1] > self.best_acc:
+                self.data=self.neural_network.para_save()
+        
                 self.best_acc= self.epoch_testacc[-1]
                 self.best_loss = self.neural_network.loss
                 self.wait = 0
@@ -109,9 +113,9 @@ class train:
             
         
     def save_para(self,path):
-        data=self.neural_network.para_save()
+       
         with open(path, 'wb') as f:
-            pickle.dump(data, f)
+            pickle.dump(self.data, f)
         
         
     def save_data(self):
@@ -152,9 +156,9 @@ class train:
     
         
 if __name__ == '__main__':
-    train_model=train([784,1176],12,['Relu'], 0.0001,True,0)
+    train_model=train([784,1176],12,['Relu'], 0.00001,True,0)
     train_model.train(30,200)
-    train_model.save_para()
+    train_model.save_para('Task1\img\data\img_model.pkl')
     train_model.epo_plot("Task1\img\experiencedata\\new.png")
     
     

@@ -21,7 +21,7 @@ class DataLoader:
         labels = [self.labels[idx] for idx in batch_indices]
         datas = [np.atleast_2d(data) for data in datas]
         labels = [np.atleast_2d(label) for label in labels]
-        
+        self.start_index+=self.batch_size
         # 堆叠二维数组以形成批数据
         datas = np.vstack(datas)
         labels=np.vstack(labels)
