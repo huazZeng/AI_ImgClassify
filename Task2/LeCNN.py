@@ -4,34 +4,53 @@ from torch import nn, optim
 import sys
 from trainfunc import train_CNN
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+import torch.nn.functional as F
+
 class LeNet(nn.Module):
-    def __init__(self):
+    def __init__(self, use_dropout=False, use_batchnorm=False):
         super(LeNet, self).__init__()
+        self.use_dropout = use_dropout
+        self.use_batchnorm = use_batchnorm
+        
         self.conv = nn.Sequential(
             nn.Conv2d(1, 6, 5), # in_channels, out_channels, kernel_size
-            nn.BatchNorm2d(6),
+            
             nn.ReLU(),
-            nn.MaxPool2d(2, 2), # kernel_size, stride
+            nn.MaxPool2d(2, 2),
+            self._batchnorm(6),# kernel_size, stride
             nn.Conv2d(6, 16, 5),
-            nn.BatchNorm2d(16),
+            
             nn.ReLU(),
-            nn.MaxPool2d(2, 2)
+            nn.MaxPool2d(2, 2),
+            self._batchnorm(16)
         )
+        
         self.fc = nn.Sequential(
             nn.Linear(16*4*4, 120),
-            nn.BatchNorm2d(120),
             nn.ReLU(),
             nn.Linear(120, 84),
-            nn.BatchNorm2d(84),
             nn.ReLU(),
-            nn.Dropout(0.5),
+            self._dropout(),
             nn.Linear(84, 12)
         )
+        
+    def _batchnorm(self, num_features):
+        if self.use_batchnorm:
+            return nn.BatchNorm2d(num_features)
+        else:
+            return nn.Identity()
+        
+    def _dropout(self):
+        if self.use_dropout:
+            return nn.Dropout(0.5)
+        else:
+            return nn.Identity()
 
-    def forward(self, img):
-        feature = self.conv(img)
-        output = self.fc(feature.view(img.shape[0], -1))
-        return output
+    def forward(self, x):
+        x = self.conv(x)
+        x = torch.flatten(x, 1)
+        x = self.fc(x)
+        return x
 
     def load_parameters(self, file_path):
         self.load_state_dict(torch.load(file_path))
@@ -39,7 +58,7 @@ class LeNet(nn.Module):
 
 
 if __name__ == '__main__':
-    net=LeNet()
+    net=LeNet(True,True)
     lr, num_epochs = 0.001, 50
     optimizer = torch.optim.Adam(net.parameters(), lr=lr)
     train_iter,test_iter=train_CNN.loaddata('Task2\\train','Task2\\train',30)

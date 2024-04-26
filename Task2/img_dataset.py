@@ -13,6 +13,7 @@ class LocalDataset(Dataset):
         self.transform2tensor= transforms.Compose([
             transforms.Resize((28, 28)),
             transforms.RandomHorizontalFlip(),
+            transforms.RandomRotation(degrees=15),  # 随机旋转
             transforms.ToTensor()
             ])
         self._load_data()
