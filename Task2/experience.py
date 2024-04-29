@@ -14,37 +14,44 @@ def plot_train_test(data1, data2,save_path):
     plt.close()
     
     
+# net=LeNet(False,False)
+# lr, num_epochs = 0.001, 20
+# optimizer = torch.optim.Adam(net.parameters(), lr=lr)
+# train_iter,test_iter=train_CNN.loaddata('Task2\\train','Task2\\train',30)
+# test_accs,test_losses,train_accs,train_losses=train_CNN.train(net, train_iter, test_iter,optimizer, device, num_epochs)
+# plot_train_test(test_accs,train_accs,'Task2\experience\\FF_acc.png')
+# plot_train_test(test_losses,train_losses,'Task2\experience\\FF_train.png')
+
+# net=LeNet(True,False)
+# lr, num_epochs = 0.001, 20
+# optimizer = torch.optim.Adam(net.parameters(), lr=lr)
+# train_iter,test_iter=train_CNN.loaddata('Task2\\train','Task2\\train',30)
+# test_accs,test_losses,train_accs,train_losses=train_CNN.train(net, train_iter, test_iter,optimizer, device, num_epochs)
+# plot_train_test(test_accs,train_accs,'Task2\experience\\TF_acc.png')
+# plot_train_test(test_losses,train_losses,'Task2\experience\\TF_train.png')
+
+# net=LeNet(False,True)
+# lr, num_epochs = 0.001, 20
+# optimizer = torch.optim.Adam(net.parameters(), lr=lr)
+# train_iter,test_iter=train_CNN.loaddata('Task2\\train','Task2\\train',30)
+# test_accs,test_losses,train_accs,train_losses=train_CNN.train(net, train_iter, test_iter,optimizer, device, num_epochs)
+# plot_train_test(test_accs,train_accs,'Task2\experience\\FT_acc.png')
+# plot_train_test(test_losses,train_losses,'Task2\experience\\FT_train.png')
+
+
+# net=LeNet(True,True)
+# lr, num_epochs = 0.001, 20
+# optimizer = torch.optim.Adam(net.parameters(), lr=lr)
+# train_iter,test_iter=train_CNN.loaddata('Task2\\train','Task2\\train',30)
+# test_accs,test_losses,train_accs,train_losses=train_CNN.train(net, train_iter, test_iter,optimizer, device, num_epochs)
+# plot_train_test(test_accs,train_accs,'Task2\experience\\TT_acc.png')
+# plot_train_test(test_losses,train_losses,'Task2\experience\\TT_train.png')
+
+
 net=LeNet(False,False)
 lr, num_epochs = 0.001, 20
 optimizer = torch.optim.Adam(net.parameters(), lr=lr)
 train_iter,test_iter=train_CNN.loaddata('Task2\\train','Task2\\train',30)
 test_accs,test_losses,train_accs,train_losses=train_CNN.train(net, train_iter, test_iter,optimizer, device, num_epochs)
-plot_train_test(test_accs,train_accs,'Task2\experience\\FF_acc.png')
-plot_train_test(test_losses,train_losses,'Task2\experience\\FF_train.png')
-
-net=LeNet(True,False)
-lr, num_epochs = 0.001, 20
-optimizer = torch.optim.Adam(net.parameters(), lr=lr)
-train_iter,test_iter=train_CNN.loaddata('Task2\\train','Task2\\train',30)
-test_accs,test_losses,train_accs,train_losses=train_CNN.train(net, train_iter, test_iter,optimizer, device, num_epochs)
-plot_train_test(test_accs,train_accs,'Task2\experience\\TF_acc.png')
-plot_train_test(test_losses,train_losses,'Task2\experience\\TF_train.png')
-
-net=LeNet(False,True)
-lr, num_epochs = 0.001, 20
-optimizer = torch.optim.Adam(net.parameters(), lr=lr)
-train_iter,test_iter=train_CNN.loaddata('Task2\\train','Task2\\train',30)
-test_accs,test_losses,train_accs,train_losses=train_CNN.train(net, train_iter, test_iter,optimizer, device, num_epochs)
-plot_train_test(test_accs,train_accs,'Task2\experience\\FT_acc.png')
-plot_train_test(test_losses,train_losses,'Task2\experience\\FT_train.png')
-
-
-net=LeNet(True,True)
-lr, num_epochs = 0.001, 20
-optimizer = torch.optim.Adam(net.parameters(), lr=lr)
-train_iter,test_iter=train_CNN.loaddata('Task2\\train','Task2\\train',30)
-test_accs,test_losses,train_accs,train_losses=train_CNN.train(net, train_iter, test_iter,optimizer, device, num_epochs)
-plot_train_test(test_accs,train_accs,'Task2\experience\\TT_acc.png')
-plot_train_test(test_losses,train_losses,'Task2\experience\\TT_train.png')
-
-
+plot_train_test(test_accs,train_accs,'Task2\experience\\52_acc.png')
+plot_train_test(test_losses,train_losses,'Task2\experience\\52_train.png')

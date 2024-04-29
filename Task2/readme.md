@@ -23,10 +23,19 @@
   - 自适应学习率优化算法，结合了动量方法和自适应学习率方法的优点
 
 ### 实验
-- 网络结构
+- 网络结构改进
   - 更小的卷积窗口
-  - 更多的卷积层
-  - 更深的MLP层
+  - 更多的卷积层 ： 由于图像本身的大小较小，难以进行多层卷积，三层卷积难调整卷积窗口与步长
+  
+由表格可见，在目前的任务下，使用更小的窗口去提取更细节的特征并不能**起到明显的进步效果**
+在lenet的结构下，该网络性能已经很好了
+| 卷积窗口 | 卷积层 | ACC图像                            | LOSS 图像                            | 最优epoch                                                            |
+| ------- | --------- | ---------------------------------- | ------------------------------------ | -------------------------------------------------------------------- |
+|   5    |     2     | ![alt text](experience/32_acc.png) | ![alt text](experience/32_train.png) | epoch 20, loss 0.0662, train acc 0.978, test acc 0.955, time 3.2 sec |
+|    3    |      2    | ![alt text](experience/52_acc.png) | ![alt text](experience/52_train.png) | epoch 20, loss 0.0703, train acc 0.978, test acc 0.960, time 3.3 sec |
+
+
+
 - 下面为dropout 与batchnorm的实验
     - 由3，4与1，2的最优周期对比，可见 batchnorm**确实能够加速收敛**
     - 由1，2的对比可见，dropout提高了**模型的泛化能力**
@@ -59,3 +68,24 @@
 - 早停
   - 在训练函数中 加入patient，wait变量，当网络的结果不如之前最好的结果时，wait+1，到达patient则早停
   - 存储最优的结果
+  
+  epoch 1, loss 1.8963, train acc 0.353, test acc 0.631, time 34.1 sec
+epoch 2, loss 0.8291, train acc 0.731, test acc 0.782, time 3.4 sec
+epoch 3, loss 0.5224, train acc 0.835, test acc 0.866, time 3.3 sec
+epoch 4, loss 0.3558, train acc 0.888, test acc 0.894, time 3.2 sec
+epoch 5, loss 0.2657, train acc 0.915, test acc 0.928, time 3.3 sec
+epoch 6, loss 0.2170, train acc 0.935, test acc 0.924, time 3.3 sec
+epoch 7, loss 0.1914, train acc 0.941, test acc 0.927, time 3.3 sec
+epoch 8, loss 0.1710, train acc 0.948, test acc 0.944, time 3.4 sec
+epoch 9, loss 0.1477, train acc 0.956, test acc 0.930, time 3.2 sec
+epoch 10, loss 0.1471, train acc 0.955, test acc 0.950, time 3.2 sec
+epoch 11, loss 0.1210, train acc 0.965, test acc 0.941, time 3.2 sec
+epoch 12, loss 0.1164, train acc 0.962, test acc 0.928, time 3.3 sec
+epoch 13, loss 0.1095, train acc 0.964, test acc 0.946, time 3.3 sec
+epoch 14, loss 0.0984, train acc 0.968, test acc 0.952, time 3.3 sec
+epoch 15, loss 0.0876, train acc 0.971, test acc 0.947, time 3.2 sec
+epoch 16, loss 0.0924, train acc 0.970, test acc 0.958, time 3.3 sec
+epoch 17, loss 0.0800, train acc 0.974, test acc 0.965, time 3.5 sec
+epoch 18, loss 0.0843, train acc 0.974, test acc 0.945, time 3.2 sec
+epoch 19, loss 0.0754, train acc 0.977, test acc 0.968, time 3.2 sec
+epoch 20, loss 0.0662, train acc 0.978, test acc 0.955, time 3.2 sec

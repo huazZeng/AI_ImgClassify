@@ -17,7 +17,7 @@ class LeNet(nn.Module):
             
             nn.ReLU(),
             nn.MaxPool2d(2, 2),
-            self._batchnorm(6),# kernel_size, stride
+            self._batchnorm(6),
             nn.Conv2d(6, 16, 5),
             
             nn.ReLU(),
