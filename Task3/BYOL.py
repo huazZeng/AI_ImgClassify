@@ -6,16 +6,7 @@ import torchvision.datasets as datasets
 from torch.utils.data import DataLoader
 from torchvision.models import resnet50
 
-class MLP(nn.Module):
-    def __init__(self, input_dim, hidden_dim, output_dim):
-        super(MLP, self).__init__()
-        self.fc1 = nn.Linear(input_dim, hidden_dim)
-        self.fc2 = nn.Linear(hidden_dim, output_dim)
 
-    def forward(self, x):
-        x = F.relu(self.fc1(x))
-        x = self.fc2(x)
-        return x
 
 class BYOL(nn.Module):
     def __init__(self, dim=256, hidden_dim=4096, output_dim=256, beta=0.99, tau_base=0.996):
@@ -52,10 +43,16 @@ class BYOL(nn.Module):
         for param in self.target_network.parameters():
             param.requires_grad = False
         #预测器
-        self.predictor = MLP(dim, hidden_dim, output_dim)
+        self.predictor = nn.Sequential(
+            nn.Linear(dim, hidden_dim),
+            nn.BatchNorm1d(hidden_dim),
+            nn.ReLU(),
+            nn.Linear(hidden_dim, output_dim)
+        )
+        
         self.beta = beta
         self.tau_base = tau_base
-
+    ## 交叉计算
     def forward(self, x1, x2):
         z1_online = self.online_network(x1)
         z2_online = self.online_network(x2)
@@ -65,8 +62,8 @@ class BYOL(nn.Module):
         p1 = self.predictor(z1_online)
         p2 = self.predictor(z2_online)
         loss = self.byol_loss(p1, z2_target.detach()) + self.byol_loss(p2, z1_target.detach())
-        return loss
-
+        return loss.mean
+    #动量更新目标网络
     def update_target_network(self, current_step, max_steps):
         #动量
         tau = 1 - (1 - self.tau_base) * (torch.cos(torch.tensor([current_step / max_steps * 3.1416])) + 1) / 2
@@ -74,16 +71,27 @@ class BYOL(nn.Module):
         for online_params, target_params in zip(self.online_network.parameters(), self.target_network.parameters()):
             target_params.data = tau * target_params.data + (1 - tau) * online_params.data
 
+    #论文中的表述 
     def byol_loss(online_proj, target_proj):
-        # Normalize the online projection
-        online_proj_normalized = F.normalize(online_proj, dim=-1)
-        # Normalize the target projection
-        target_proj_normalized = F.normalize(target_proj, dim=-1)
         
-        # Compute the mean squared error between the normalized predictions and target projections
-        loss = F.mse_loss(online_proj_normalized, target_proj_normalized)
-        
-        return loss
+        online_proj = F.normalize(x, dim=-1, p=2)
+        target_proj = F.normalize(y, dim=-1, p=2)
+        return 2 - 2 * (online_proj * target_proj).sum(dim=-1)
+    
+    
+    
+#对图像进行不同的增强，增强形式可以自己添加，以下仅为示例
+def byol_augment(img):
+    # First augmentation
+    img1 = transforms.ColorJitter(0.4, 0.4, 0.4, 0.1)(img)
+    img1 = transforms.functional.to_grayscale(img1, num_output_channels=3)
+    # Second augmentation
+    img2 = transforms.ColorJitter(0.4, 0.4, 0.4, 0.1)(img)
+    img2 = transforms.GaussianBlur(kernel_size=23, sigma=(0.1, 2.0))(img2)
+    
+    return img1, img2
+
+
 
 # Example usage
 num_epochs = 1000
@@ -110,10 +118,15 @@ optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate,  weight_decay=
 
 for epoch in range(num_epochs):
     for imgs, _ in train_loader:
-        img1, img2 = imgs[0].to(device), imgs[1].to(device)
+        imgs_augmented = [byol_augment(img) for img in imgs]
+        imgs1, imgs2 = zip(*imgs_augmented)
+        
+        # 叠加为二维向量
+        imgs1 = torch.stack(imgs1).to(device)
+        imgs2 = torch.stack(imgs2).to(device)
+        
         loss = model.forward(img1, img2)
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
-        optimizer.zero_grad()
-        loss.backward()
+        model.update_target_network(epoch,num_epochs)
