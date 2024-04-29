@@ -64,7 +64,7 @@ class BYOL(nn.Module):
             z2_target = self.target_network(x2)
         p1 = self.predictor(z1_online)
         p2 = self.predictor(z2_online)
-        loss = self.loss_func(p1, z2_target.detach()) + self.loss_func(p2, z1_target.detach())
+        loss = self.byol_loss(p1, z2_target.detach()) + self.byol_loss(p2, z1_target.detach())
         return loss
 
     def update_target_network(self, current_step, max_steps):
@@ -74,16 +74,20 @@ class BYOL(nn.Module):
         for online_params, target_params in zip(self.online_network.parameters(), self.target_network.parameters()):
             target_params.data = tau * target_params.data + (1 - tau) * online_params.data
 
-    def loss_func(self, p, z):
-        #计算预测结果特征与实际特征的差别 作为loss
-        p = F.normalize(p, dim=1)
-        z = F.normalize(z, dim=1)
-        return 2 - 2 * (p * z).sum(dim=1)
+    def byol_loss(online_proj, target_proj):
+        # Normalize the online projection
+        online_proj_normalized = F.normalize(online_proj, dim=-1)
+        # Normalize the target projection
+        target_proj_normalized = F.normalize(target_proj, dim=-1)
+        
+        # Compute the mean squared error between the normalized predictions and target projections
+        loss = F.mse_loss(online_proj_normalized, target_proj_normalized)
+        
+        return loss
 
 # Example usage
 num_epochs = 1000
 learning_rate = 0.2 * batch_size / 256
-momentum = 0.9
 weight_decay = 1.5e-6
 warmup_epochs = 10
 batch_size = 4096
@@ -102,11 +106,14 @@ train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, nu
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = BYOL().to(device)
 
-optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate, momentum=momentum, weight_decay=weight_decay)
+optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate,  weight_decay=weight_decay)
 
 for epoch in range(num_epochs):
     for imgs, _ in train_loader:
         img1, img2 = imgs[0].to(device), imgs[1].to(device)
-        loss = model(img1, img2)
+        loss = model.forward(img1, img2)
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
         optimizer.zero_grad()
         loss.backward()
