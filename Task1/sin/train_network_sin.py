@@ -135,15 +135,13 @@ class train:
         plt.legend()
         plt.grid(True)
         plt.show()    
-# if __name__ == '__main__':
-#     # trained_model=trained_model('.\Task1\data.pkl')
-#     # trained_model.load_para()
-#     train_model=train([1,10,100,10],1,['Relu','Relu','Relu'], Task_type.Fitting,0.001,True)
-#     # train_model.neural_network=trained_model.network
-#     # train_model.neural_network.learning_rate=0.008
-#     train_model.train(25,2000)
-#     train_model.test()
-#     train_model.save_para()
-#     train_model.epo_plot(1)
+if __name__ == '__main__':
+    # trained_model=trained_model('.\Task1\data.pkl')
+    # trained_model.load_para()
+    train_model=train([1,10,100,10],1,['Relu','Relu','Relu'], Task_type.Fitting,0.001,True,0)
+    # train_model.neural_network=trained_model.network
+    # train_model.neural_network.learning_rate=0.008
+    train_model.load_para('Task1\sin\data\data.pkl')
+    train_model.test_sin()
     
     
