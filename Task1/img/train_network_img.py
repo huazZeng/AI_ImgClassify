@@ -141,24 +141,28 @@ class train:
         plt.close()
         
     def load_para(self,path):
+        print(1)
         with open(path, 'rb') as f:
             loaded_data = pickle.load(f)
-        self.network=network(loaded_data['layer_size'],loaded_data['last_layer_size'],
+        self.neural_network=network(loaded_data['layer_size'],loaded_data['last_layer_size'],
                            loaded_data['func'],self.learning_rate,self.lr_update,self.l1_lambda)
         i=0
-        for layer in self.network.layers:
+        for layer in self.neural_network.layers:
             layer.weights=loaded_data['data'][i]
             layer.bias=loaded_data['data'][i+1]
             i+=2
-        self.network.output_layer.weights=loaded_data['data'][i]
-        self.network.output_layer.bias=loaded_data['data'][i+1]
+        self.neural_network.output_layer.weights=loaded_data['data'][i]
+        self.neural_network.output_layer.bias=loaded_data['data'][i+1]
         
     
         
 if __name__ == '__main__':
-    train_model=train([784,1176],12,['Relu'], 0.00001,True,0)
-    train_model.train(30,200)
-    train_model.save_para('Task1\img\data\img_model.pkl')
-    train_model.epo_plot("Task1\img\experiencedata\\new.png")
+    train_model=train([784,1176],12,['Relu'], 0,True,0)
+    train_model.load_para('Task1\img\data\\new.pkl')
+    train_model.neural_network.learning_rate=0.0000005
+    
+    train_model.train(30,10)
+    train_model.save_para('Task1\img\data\\new1.pkl')
+    # train_model.epo_plot("Task1\img\experiencedata\\new.png")
     
     

@@ -23,11 +23,12 @@ class trained_model:
         
     def test(self):
         self.data_model = imageDataset('Task1\\img\\train')
-        self.testdataloader=DataLoader(self.data_model.test_images,self.data_model.test_labels,1000)
+        self.testdataloader=DataLoader(self.data_model.train_images,self.data_model.train_labels,1000)
         self.testdataloader.__iter__()
         testdata,testlabel=self.testdataloader.__next__()
         self.network.forward(testdata)
         self.network.cal_loss(testlabel)
+        
         print(self.acc(self.network.output,testlabel))
         
     def acc(self,output,targets):
@@ -37,6 +38,6 @@ class trained_model:
         return accuracy
     
 if __name__ == '__main__':
-    model=trained_model('Task1\img\data\img_model.pkl')
+    model=trained_model('Task1\img\data\\new.pkl')
     model.load_para()
     model.test()
