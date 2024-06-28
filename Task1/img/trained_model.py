@@ -22,7 +22,7 @@ class trained_model:
         self.network.output_layer.bias=loaded_data['data'][i+1]
         
     def test(self):
-        self.data_model = imageDataset('Task1\\img\\train')
+        self.data_model = imageDataset('test_data\\test_data')
         self.testdataloader=DataLoader(self.data_model.train_images,self.data_model.train_labels,1000)
         self.testdataloader.__iter__()
         testdata,testlabel=self.testdataloader.__next__()

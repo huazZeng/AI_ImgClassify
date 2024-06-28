@@ -25,7 +25,7 @@ class imageDataset:
             class_dir = os.path.join(self.data_dir, class_name)
             if os.path.isdir(class_dir):
                 for file_name in os.listdir(class_dir):
-                    if  int(file_name.split('.')[0]) < 550:
+                    if  int(file_name.split('.')[0]) > 0:
                         image_path = os.path.join(class_dir, file_name)
                         image_path = os.path.join(class_dir, file_name)
                         image = Image.open(image_path).convert('L')
@@ -35,7 +35,7 @@ class imageDataset:
                         self.train_images.append(image_vector)
                         onehot=np.eye(12)[i]
                         self.train_labels.append(onehot)
-                    elif int(file_name.split('.')[0]) >= 550:
+                    elif int(file_name.split('.')[0]) == 0:
                         image_path = os.path.join(class_dir, file_name)
                         image_path = os.path.join(class_dir, file_name)
                         image = Image.open(image_path).convert('L')

@@ -13,7 +13,7 @@ class train_CNN:
         test_dataset = LocalDataset(data_dir=dir2, train=False)
 
         # 创建 DataLoader
-        train_loader = DataLoader(train_dataset, batch_size, shuffle=True)
+        train_loader = DataLoader(train_dataset, batch_size, shuffle=False)
         test_loader = DataLoader(test_dataset, batch_size, shuffle=False)
         return train_loader,test_loader
     

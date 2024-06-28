@@ -25,11 +25,11 @@ class LocalDataset(Dataset):
             class_dir = os.path.join(self.data_dir, class_name)
             if os.path.isdir(class_dir):
                 for file_name in os.listdir(class_dir):
-                    if self.train and int(file_name.split('.')[0]) < 550:
+                    if self.train and int(file_name.split('.')[0]) < 0:
                         image_path = os.path.join(class_dir, file_name)
                         self.images.append(image_path)
                         self.labels.append(i)
-                    elif not self.train and int(file_name.split('.')[0]) >= 550:
+                    elif not self.train and int(file_name.split('.')[0]) > 0:
                         image_path = os.path.join(class_dir, file_name)
                         self.images.append(image_path)
                         self.labels.append(i)
